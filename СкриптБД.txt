@@ -1,0 +1,530 @@
+USE [master]
+GO
+/****** Object:  Database [DBSession]    Script Date: 12.05.2025 10:59:11 ******/
+CREATE DATABASE [DBSession]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'DBSession', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\DBSession.mdf' , SIZE = 5120KB , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
+ LOG ON 
+( NAME = N'DBSession_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\DBSession_log.ldf' , SIZE = 1024KB , MAXSIZE = 2048GB , FILEGROWTH = 10%)
+GO
+ALTER DATABASE [DBSession] SET COMPATIBILITY_LEVEL = 120
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [DBSession].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [DBSession] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [DBSession] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [DBSession] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [DBSession] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [DBSession] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [DBSession] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [DBSession] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [DBSession] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [DBSession] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [DBSession] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [DBSession] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [DBSession] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [DBSession] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [DBSession] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [DBSession] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [DBSession] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [DBSession] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [DBSession] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [DBSession] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [DBSession] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [DBSession] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [DBSession] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [DBSession] SET RECOVERY SIMPLE 
+GO
+ALTER DATABASE [DBSession] SET  MULTI_USER 
+GO
+ALTER DATABASE [DBSession] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [DBSession] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [DBSession] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [DBSession] SET TARGET_RECOVERY_TIME = 0 SECONDS 
+GO
+ALTER DATABASE [DBSession] SET DELAYED_DURABILITY = DISABLED 
+GO
+USE [DBSession]
+GO
+/****** Object:  Table [dbo].[Анализаторы]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Анализаторы](
+	[КодАнализатора] [int] IDENTITY(1,1) NOT NULL,
+	[Модель] [nvarchar](50) NOT NULL,
+	[СерийныйНомер] [nvarchar](50) NOT NULL,
+	[ДатаУстановки] [date] NOT NULL,
+	[ДатаПоследнегоОбслуживания] [date] NULL,
+	[Активен] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[КодАнализатора] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[СерийныйНомер] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Заказы]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Заказы](
+	[КодЗаказа] [int] IDENTITY(1,1) NOT NULL,
+	[КодПациента] [int] NOT NULL,
+	[ДатаСоздания] [datetime] NOT NULL,
+	[Статус] [nvarchar](20) NOT NULL,
+	[ОбщаяСтоимость] [decimal](10, 2) NOT NULL,
+	[СрокВыполненияДней] [int] NULL,
+	[ВАрхиве] [bit] NOT NULL,
+	[ДатаАрхивации] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[КодЗаказа] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ИсторияВхода]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ИсторияВхода](
+	[КодЗаписи] [int] IDENTITY(1,1) NOT NULL,
+	[Логин] [nvarchar](50) NOT NULL,
+	[ВремяПопытки] [datetime] NOT NULL,
+	[Успешна] [bit] NOT NULL,
+	[IPАдрес] [nvarchar](15) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[КодЗаписи] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Пациенты]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Пациенты](
+	[КодПациента] [int] IDENTITY(1,1) NOT NULL,
+	[Логин] [nvarchar](50) NOT NULL,
+	[ХешПароля] [nvarchar](255) NOT NULL,
+	[Фамилия] [nvarchar](50) NOT NULL,
+	[Имя] [nvarchar](50) NOT NULL,
+	[Отчество] [nvarchar](50) NULL,
+	[ДатаРождения] [date] NOT NULL,
+	[СерияПаспорта] [nvarchar](4) NOT NULL,
+	[НомерПаспорта] [nvarchar](6) NOT NULL,
+	[Телефон] [nvarchar](15) NOT NULL,
+	[Email] [nvarchar](100) NULL,
+	[НомерПолиса] [nvarchar](16) NOT NULL,
+	[ТипПолиса] [nvarchar](50) NOT NULL,
+	[КодСтраховой] [int] NOT NULL,
+	[ВАрхиве] [bit] NOT NULL,
+	[ДатаАрхивации] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[КодПациента] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Логин] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [UQ_Паспорт] UNIQUE NONCLUSTERED 
+(
+	[СерияПаспорта] ASC,
+	[НомерПаспорта] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [UQ_СтраховойПолис] UNIQUE NONCLUSTERED 
+(
+	[НомерПолиса] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[РасходныеМатериалы]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[РасходныеМатериалы](
+	[КодМатериала] [int] IDENTITY(1,1) NOT NULL,
+	[Наименование] [nvarchar](100) NOT NULL,
+	[Описание] [nvarchar](255) NULL,
+	[Количество] [int] NOT NULL,
+	[ЕдиницаИзмерения] [nvarchar](20) NOT NULL,
+	[ДатаПоследнейПоставки] [date] NULL,
+	[ДатаСледующейПоставки] [date] NULL,
+	[МинимальныйЗапас] [int] NOT NULL,
+	[ВАрхиве] [bit] NOT NULL,
+	[ДатаАрхивации] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[КодМатериала] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Сотрудники]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Сотрудники](
+	[КодСотрудника] [int] IDENTITY(1,1) NOT NULL,
+	[Логин] [nvarchar](50) NOT NULL,
+	[ХешПароля] [nvarchar](255) NOT NULL,
+	[Фамилия] [nvarchar](50) NOT NULL,
+	[Имя] [nvarchar](50) NOT NULL,
+	[Отчество] [nvarchar](50) NULL,
+	[Роль] [nvarchar](20) NOT NULL,
+	[ПоследнийВход] [datetime] NULL,
+	[ВАрхиве] [bit] NOT NULL,
+	[ДатаАрхивации] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[КодСотрудника] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Логин] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[СтраховыеКомпании]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[СтраховыеКомпании](
+	[КодКомпании] [int] IDENTITY(1,1) NOT NULL,
+	[Название] [nvarchar](100) NOT NULL,
+	[Адрес] [nvarchar](200) NOT NULL,
+	[ИНН] [nvarchar](12) NOT NULL,
+	[РасчетныйСчет] [nvarchar](20) NOT NULL,
+	[БИК] [nvarchar](9) NOT NULL,
+	[ВАрхиве] [bit] NOT NULL,
+	[ДатаАрхивации] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[КодКомпании] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[ИНН] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[СчетаСтраховымКомпаниям]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[СчетаСтраховымКомпаниям](
+	[КодСчета] [int] IDENTITY(1,1) NOT NULL,
+	[КодСтраховой] [int] NOT NULL,
+	[КодЗаказа] [int] NOT NULL,
+	[КодБухгалтера] [int] NOT NULL,
+	[ДатаСчета] [datetime] NOT NULL,
+	[Сумма] [decimal](10, 2) NOT NULL,
+	[Статус] [nvarchar](20) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[КодСчета] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Услуги]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Услуги](
+	[КодУслуги] [int] IDENTITY(1,1) NOT NULL,
+	[Код] [nvarchar](20) NOT NULL,
+	[Наименование] [nvarchar](100) NOT NULL,
+	[Стоимость] [decimal](10, 2) NOT NULL,
+	[СрокВыполненияДней] [int] NOT NULL,
+	[СреднееОтклонение] [decimal](5, 2) NULL,
+	[ВАрхиве] [bit] NOT NULL,
+	[ДатаАрхивации] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[КодУслуги] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Код] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[УслугиВЗаказе]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[УслугиВЗаказе](
+	[КодУслугиВЗаказе] [int] IDENTITY(1,1) NOT NULL,
+	[КодЗаказа] [int] NOT NULL,
+	[КодУслуги] [int] NOT NULL,
+	[Статус] [nvarchar](20) NOT NULL,
+	[ДатаВыполнения] [date] NULL,
+	[КодСотрудника] [int] NULL,
+	[КодАнализатора] [int] NULL,
+	[ВремяВыполненияСекунд] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[КодУслугиВЗаказе] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[УслугиСотрудников]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[УслугиСотрудников](
+	[КодСотрудника] [int] NOT NULL,
+	[КодУслуги] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[КодСотрудника] ASC,
+	[КодУслуги] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Анализаторы] ADD  DEFAULT ((1)) FOR [Активен]
+GO
+ALTER TABLE [dbo].[Заказы] ADD  DEFAULT (getdate()) FOR [ДатаСоздания]
+GO
+ALTER TABLE [dbo].[Заказы] ADD  DEFAULT ((0)) FOR [ВАрхиве]
+GO
+ALTER TABLE [dbo].[ИсторияВхода] ADD  DEFAULT (getdate()) FOR [ВремяПопытки]
+GO
+ALTER TABLE [dbo].[Пациенты] ADD  DEFAULT ((0)) FOR [ВАрхиве]
+GO
+ALTER TABLE [dbo].[РасходныеМатериалы] ADD  DEFAULT ((0)) FOR [ВАрхиве]
+GO
+ALTER TABLE [dbo].[Сотрудники] ADD  DEFAULT ((0)) FOR [ВАрхиве]
+GO
+ALTER TABLE [dbo].[СтраховыеКомпании] ADD  DEFAULT ((0)) FOR [ВАрхиве]
+GO
+ALTER TABLE [dbo].[СчетаСтраховымКомпаниям] ADD  DEFAULT (getdate()) FOR [ДатаСчета]
+GO
+ALTER TABLE [dbo].[Услуги] ADD  DEFAULT ((0)) FOR [ВАрхиве]
+GO
+ALTER TABLE [dbo].[Заказы]  WITH CHECK ADD  CONSTRAINT [FK_Заказы_Пациенты] FOREIGN KEY([КодПациента])
+REFERENCES [dbo].[Пациенты] ([КодПациента])
+GO
+ALTER TABLE [dbo].[Заказы] CHECK CONSTRAINT [FK_Заказы_Пациенты]
+GO
+ALTER TABLE [dbo].[Пациенты]  WITH CHECK ADD  CONSTRAINT [FK_Пациенты_СтраховыеКомпании] FOREIGN KEY([КодСтраховой])
+REFERENCES [dbo].[СтраховыеКомпании] ([КодКомпании])
+GO
+ALTER TABLE [dbo].[Пациенты] CHECK CONSTRAINT [FK_Пациенты_СтраховыеКомпании]
+GO
+ALTER TABLE [dbo].[СчетаСтраховымКомпаниям]  WITH CHECK ADD  CONSTRAINT [FK_Счета_Заказы] FOREIGN KEY([КодЗаказа])
+REFERENCES [dbo].[Заказы] ([КодЗаказа])
+GO
+ALTER TABLE [dbo].[СчетаСтраховымКомпаниям] CHECK CONSTRAINT [FK_Счета_Заказы]
+GO
+ALTER TABLE [dbo].[СчетаСтраховымКомпаниям]  WITH CHECK ADD  CONSTRAINT [FK_Счета_Сотрудники] FOREIGN KEY([КодБухгалтера])
+REFERENCES [dbo].[Сотрудники] ([КодСотрудника])
+GO
+ALTER TABLE [dbo].[СчетаСтраховымКомпаниям] CHECK CONSTRAINT [FK_Счета_Сотрудники]
+GO
+ALTER TABLE [dbo].[СчетаСтраховымКомпаниям]  WITH CHECK ADD  CONSTRAINT [FK_Счета_СтраховыеКомпании] FOREIGN KEY([КодСтраховой])
+REFERENCES [dbo].[СтраховыеКомпании] ([КодКомпании])
+GO
+ALTER TABLE [dbo].[СчетаСтраховымКомпаниям] CHECK CONSTRAINT [FK_Счета_СтраховыеКомпании]
+GO
+ALTER TABLE [dbo].[УслугиВЗаказе]  WITH CHECK ADD  CONSTRAINT [FK_УслугиВЗаказе_Анализаторы] FOREIGN KEY([КодАнализатора])
+REFERENCES [dbo].[Анализаторы] ([КодАнализатора])
+GO
+ALTER TABLE [dbo].[УслугиВЗаказе] CHECK CONSTRAINT [FK_УслугиВЗаказе_Анализаторы]
+GO
+ALTER TABLE [dbo].[УслугиВЗаказе]  WITH CHECK ADD  CONSTRAINT [FK_УслугиВЗаказе_Заказы] FOREIGN KEY([КодЗаказа])
+REFERENCES [dbo].[Заказы] ([КодЗаказа])
+GO
+ALTER TABLE [dbo].[УслугиВЗаказе] CHECK CONSTRAINT [FK_УслугиВЗаказе_Заказы]
+GO
+ALTER TABLE [dbo].[УслугиВЗаказе]  WITH CHECK ADD  CONSTRAINT [FK_УслугиВЗаказе_Сотрудники] FOREIGN KEY([КодСотрудника])
+REFERENCES [dbo].[Сотрудники] ([КодСотрудника])
+GO
+ALTER TABLE [dbo].[УслугиВЗаказе] CHECK CONSTRAINT [FK_УслугиВЗаказе_Сотрудники]
+GO
+ALTER TABLE [dbo].[УслугиВЗаказе]  WITH CHECK ADD  CONSTRAINT [FK_УслугиВЗаказе_Услуги] FOREIGN KEY([КодУслуги])
+REFERENCES [dbo].[Услуги] ([КодУслуги])
+GO
+ALTER TABLE [dbo].[УслугиВЗаказе] CHECK CONSTRAINT [FK_УслугиВЗаказе_Услуги]
+GO
+ALTER TABLE [dbo].[УслугиСотрудников]  WITH CHECK ADD  CONSTRAINT [FK_УслугиСотрудников_Сотрудники] FOREIGN KEY([КодСотрудника])
+REFERENCES [dbo].[Сотрудники] ([КодСотрудника])
+GO
+ALTER TABLE [dbo].[УслугиСотрудников] CHECK CONSTRAINT [FK_УслугиСотрудников_Сотрудники]
+GO
+ALTER TABLE [dbo].[УслугиСотрудников]  WITH CHECK ADD  CONSTRAINT [FK_УслугиСотрудников_Услуги] FOREIGN KEY([КодУслуги])
+REFERENCES [dbo].[Услуги] ([КодУслуги])
+GO
+ALTER TABLE [dbo].[УслугиСотрудников] CHECK CONSTRAINT [FK_УслугиСотрудников_Услуги]
+GO
+ALTER TABLE [dbo].[Заказы]  WITH CHECK ADD CHECK  (([Статус]='отменен' OR [Статус]='выполнен' OR [Статус]='в работе' OR [Статус]='создан'))
+GO
+ALTER TABLE [dbo].[Сотрудники]  WITH CHECK ADD CHECK  (([Роль]='администратор' OR [Роль]='бухгалтер' OR [Роль]='лаборант-исследователь' OR [Роль]='лаборант'))
+GO
+ALTER TABLE [dbo].[СчетаСтраховымКомпаниям]  WITH CHECK ADD CHECK  (([Статус]='отменен' OR [Статус]='оплачен' OR [Статус]='создан'))
+GO
+ALTER TABLE [dbo].[УслугиВЗаказе]  WITH CHECK ADD CHECK  (([Статус]='отменена' OR [Статус]='выполнена' OR [Статус]='в работе' OR [Статус]='ожидает'))
+GO
+/****** Object:  StoredProcedure [dbo].[ПолучитьАктивныеЗаказы]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[ПолучитьАктивныеЗаказы]
+    @КодСотрудника INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        з.КодЗаказа,
+        п.Фамилия + ' ' + LEFT(п.Имя, 1) + '.' + LEFT(п.Отчество, 1) + '.' AS Пациент,
+        з.ДатаСоздания,
+        у.Наименование AS Услуга,
+        уз.Статус,
+        а.Модель AS Анализатор
+    FROM УслугиВЗаказе уз
+    JOIN Заказы з ON уз.КодЗаказа = з.КодЗаказа
+    JOIN Пациенты п ON з.КодПациента = п.КодПациента
+    JOIN Услуги у ON уз.КодУслуги = у.КодУслуги
+    LEFT JOIN Анализаторы а ON уз.КодАнализатора = а.КодАнализатора
+    WHERE уз.КодСотрудника = @КодСотрудника
+    AND уз.Статус IN ('ожидает', 'в работе')
+    AND з.Статус = 'в работе'
+    ORDER BY з.ДатаСоздания;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[ПолучитьЗаказыПациента]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[ПолучитьЗаказыПациента]
+    @КодПациента INT,
+    @ВключаяАрхивные BIT = 0
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        з.КодЗаказа,
+        з.ДатаСоздания,
+        з.Статус,
+        з.ОбщаяСтоимость,
+        COUNT(уз.КодУслугиВЗаказе) AS КоличествоУслуг,
+        SUM(CASE WHEN уз.Статус = 'выполнена' THEN 1 ELSE 0 END) AS ВыполненныеУслуги
+    FROM Заказы з
+    JOIN УслугиВЗаказе уз ON з.КодЗаказа = уз.КодЗаказа
+    JOIN Услуги у ON уз.КодУслуги = у.КодУслуги
+    WHERE з.КодПациента = @КодПациента
+    AND (з.ВАрхиве = 0 OR @ВключаяАрхивные = 1)
+    GROUP BY з.КодЗаказа, з.ДатаСоздания, з.Статус, з.ОбщаяСтоимость
+    ORDER BY з.ДатаСоздания DESC;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[СоздатьЗаказ]    Script Date: 12.05.2025 10:59:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[СоздатьЗаказ]
+    @КодПациента INT,
+    @КодыУслуг NVARCHAR(MAX), -- Список ID услуг через запятую
+    @КодЗаказа INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRANSACTION;
+    
+    BEGIN TRY
+        -- Создаем заказ
+        INSERT INTO Заказы (КодПациента, Статус, ОбщаяСтоимость)
+        VALUES (@КодПациента, 'создан', 0);
+        
+        SET @КодЗаказа = SCOPE_IDENTITY();
+        
+        -- Разделяем строку с ID услуг и добавляем их в заказ
+        DECLARE @КодУслуги INT;
+        DECLARE @Позиция INT = 1;
+        DECLARE @ОбщаяСтоимость DECIMAL(10, 2) = 0;
+        
+        WHILE @Позиция <= LEN(@КодыУслуг)
+        BEGIN
+            DECLARE @СледующаяПозиция INT = CHARINDEX(',', @КодыУслуг, @Позиция);
+            IF @СледующаяПозиция = 0 SET @СледующаяПозиция = LEN(@КодыУслуг) + 1;
+            
+            SET @КодУслуги = CAST(SUBSTRING(@КодыУслуг, @Позиция, @СледующаяПозиция - @Позиция) AS INT);
+            
+            -- Добавляем услугу в заказ
+            INSERT INTO УслугиВЗаказе (КодЗаказа, КодУслуги, Статус)
+            VALUES (@КодЗаказа, @КодУслуги, 'ожидает');
+            
+            -- Суммируем стоимость
+            SELECT @ОбщаяСтоимость = @ОбщаяСтоимость + Стоимость
+            FROM Услуги
+            WHERE КодУслуги = @КодУслуги;
+            
+            SET @Позиция = @СледующаяПозиция + 1;
+        END
+        
+        -- Обновляем общую стоимость заказа
+        UPDATE Заказы
+        SET ОбщаяСтоимость = @ОбщаяСтоимость
+        WHERE КодЗаказа = @КодЗаказа;
+        
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+GO
+USE [master]
+GO
+ALTER DATABASE [DBSession] SET  READ_WRITE 
+GO
